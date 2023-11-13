@@ -16,73 +16,92 @@
 
 \tableofcontents
 
-\section{Introduction}
+%\section{Coordinate Definitions}
+%\begin{table}[h]
+%\begin{tabular}{l | llll}
+%Definition       & Symbol &  &  &  \\ \hline
+%global position  &        &  &  &  \\
+%global direction &        &  &  &  \\
+%local position   &        &  &  &  \\
+%local direction  &        &  &  & 
+%\end{tabular}
+%\end{table}
 
-We closely follow the description in \cite{adams1995}.
+\section{Coordinate definition}
+ The global coordinate consists of 3 dimension cartesian position ($\mathbf{r}$), 3 dimension unit cartesian direction ($\mathbf{t}$), and a charge divided by momentum ($\mathbf{\psi}$) \footnote{A time component will be skipped in this white paper}, hence it has 7 parameters in total. Meanwhile the local coordinate is described by two local positions ($\mathbf{l}$), two angle parameters ($\mathbf{d}$) and $\psi$. The local position is made of the closest distance ($L$) between the track and line and longitudinal position ($z'$) along the line axis. The sign of $L$ is defined as the sign of $ (\mathbf{t} \times \mathbf{w}) \cdot (\mathbf{c} - \mathbf{r})$, where $\mathbf{w}$ is a unit vector along the line axis and $\mathbf{c}$ is the center of the line. The two angle parameters are $\phi$ and $\theta$ in the global spherical coordinate.
+ 
+\section{Local to global transformation}
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.7\textwidth]{example-image-a}
-    \caption{This is a caption for a figure!}
-    \label{fig:example_a}
-\end{figure}
+A jacobian for local to global transformation is represented as the derivative of global coordinate with respect to the local coordinate:
 
-\lipsum[1] 
-
-As discussed in \autoref{fig:example_a}, the results are very promising.
-
-\section{Method}
-
-\begin{figure}[ht]
-    \begin{subfigure}{0.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{example-image-a}
-        \caption{This is a caption for a figure!}
-        \label{fig:sub:example_a}
-    \end{subfigure}
-    \begin{subfigure}{0.5\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{example-image-b}
-        \caption{This is a caption for a figure!}
-        \label{fig:sub:example_b}
-    \end{subfigure}
-
-    \caption{This is a combined caption, \subref{fig:sub:example_a} shows one
-    thing, \subref{fig:sub:example_b} shows another thing}
-    \label{fig:sub}
-\end{figure}
-
-\lipsum[1] 
-
-See \autoref{fig:sub} for an example of a combined figure.
-
-\lipsum[1] 
-
-\begin{equation}
-    a^2 + b^2 = c^2
-    \label{eq:pythagoras}
+\begin{equation}\label{eq:jacobi}
+    \mathbb{J}_{L \rightarrow G} = 
+    \begin{pmatrix}
+     \frac{\partial{\mathbf{r}}}{\partial{\mathbf{l}}} & \frac{\partial{\mathbf{r}}}{\partial{\mathbf{d}}} & \frac{\partial{\mathbf{r}}}{\partial{\mathbf{\psi}}} \\
+     \frac{\partial{\mathbf{t}}}{\partial{\mathbf{l}}} & \frac{\partial{\mathbf{t}}}{\partial{\mathbf{d}}} & \frac{\partial{\mathbf{t}}}{\partial{\mathbf{\psi}}} \\
+    \frac{\partial{\mathbf{\psi}}}{\partial{\mathbf{l}}} & \frac{\partial{\mathbf{\psi}}}{\partial{\mathbf{d}}} & \frac{\partial{\mathbf{\psi}}}{\partial{\mathbf{\psi}}}
+    \end{pmatrix}.
 \end{equation}
 
-The business with the triangles, our boy Pythagoras has already figured out, according to \autoref{eq:pythagoras}.
+Let's take a heuristic approach first to identify the zero sub-matrices. $\frac{\partial{\mathbf{r}}}{\partial{\mathbf{\psi}}}$ and $\frac{\partial{\mathbf{t}}}{\partial{\mathbf{\psi}}}$ are zero because the intersection points do not change with the variation of the momentum. $\frac{\partial{\mathbf{\psi}}}{\partial{\mathbf{l}}}$ and $\frac{\partial{\mathbf{t}}}{\partial{\mathbf{l}}}$ should also be zero for the same reason.  $\frac{\partial{\mathbf{\psi}}}{\partial{\mathbf{d}}}$ is a nonzero matrix because the intersection points may change with the variation of direction, which means that the energy loss should taken into account. However, it still can be assumed that the energy loss is fairly feeble considering that the line surfaces are usually located inside a gaseous environment. Summing up, the jacobian can be simplified as the following:
 
-\section{Conclusion}
+\begin{equation}\label{eq:jacobi2}
+    \mathbb{J}_{L \rightarrow G} = 
+    \begin{pmatrix}
+     \frac{\partial{\mathbf{r}}}{\partial{\mathbf{l}}} & \frac{\partial{\mathbf{r}}}{\partial{\mathbf{d}}} &  \mathcal{O} \\
+     \mathcal{O} & \frac{\partial{\mathbf{t}}}{\partial{\mathbf{d}}} &  \mathcal{O} \\
+     \mathcal{O} & \mathcal{O} & 1
+    \end{pmatrix},
+\end{equation}
+where $\mathcal{O}$ was used as a notation for zero sub-matrices.
 
-\lipsum[1] 
+It is straightforward to obtain $\frac{\partial{\mathbf{t}}}{\partial{\mathbf{d}}}$ because $\mathbf{t}$ can be represented as trigonometric functions of $\phi$ and $\theta$. $\frac{\partial{\mathbf{r}}}{\partial{\mathbf{l}}}$ can be calculated by defining a cartesian reference frame defined with $\mathbf{u}'$, $\mathbf{v}'$, and $\mathbf{w}'$ unit vectors:
+\begin{eqnarray}\label{eq:new_coord}
+    \mathbf{u}' & = & \frac{\mathbf{w} \times \mathbf{t}}{|\mathbf{w} \times \mathbf{t}|}, \nonumber \\
+    \mathbf{v}' & = & \mathbf{w}, \nonumber \\
+    \mathbf{w}' & = & \mathbf{u}' \times \mathbf{v}'.
+\end{eqnarray}
 
-\appendix
+Since $L$ and $z'$ is defined on $\mathbf{u}'$ and $\mathbf{v}'$, $\frac{\partial{\mathbf{r}}}{\partial{\mathbf{l}}}$ is a $3 \times 2$ rotation matrix from the reference frame to global cartesian coordinate without $\mathbf{w}'$ component. $\frac{\partial{\mathbf{r}}}{\partial{\mathbf{d}}}$ can be calculated by making use of the following equations:
+\begin{equation}\label{eq:eq1}
+    \frac{\partial \mathbf{t}}{\partial \phi} \cdot \mathbf{t} = 0,
+\end{equation}
 
-\section{Auxiliary material}
-\subsection{First subsection}
+\begin{equation}\label{eq:eq2}
+    \mathbf{w} \times \mathbf{t} \times \mathbf{w} = \mathbf{t} - \mathbf{w}(\mathbf{t} \cdot \mathbf{w}),
+\end{equation}
 
-\lipsum[1] 
+\begin{equation}\label{eq:eq3}
+    \mathbf{w}' \cdot \mathbf{t} = \frac{1- (\mathbf{w} \cdot \mathbf{t})^2}{|\mathbf{w} \times \mathbf{t}|} = |\mathbf{w} \times \mathbf{t}|,
+\end{equation}
 
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.7\textwidth]{example-image-a}
-    \caption{This is a caption for a figure!}
-    \label{fig:appendix_example_a}
-\end{figure}
+\begin{eqnarray}\label{eq:eq4}
+    \frac{\partial |\mathbf{w} \times \mathbf{t}|}{\partial \phi} & = & \frac{\partial ( \mathbf{w}' \cdot \mathbf{t} )}{\partial \phi} \nonumber \\
+          & = & \frac{\partial \mathbf{w}'}{\partial \phi} \cdot \mathbf{t} + \mathbf{w}' \cdot \frac{\partial \mathbf{t}}{\partial \phi} \nonumber \\
+          & = & \mathbf{w}' \cdot \frac{\partial \mathbf{t}}{\partial \phi} \nonumber \\
+          & = & - \frac{\mathbf{w} \cdot \mathbf{t}}{|\mathbf{w} \times \mathbf{t}|} \mathbf{w} \cdot \frac{\partial \mathbf{t}}{\partial \phi}.
+\end{eqnarray}
+Note that eq. (\ref{eq:eq1})-(\ref{eq:eq4}) also hold for $\theta$. The following equation of $\mathbf{r}$ 
+ as a function of $\mathbf{w}$ and $\mathbf{t}$ is akso useful:
+\begin{equation}
+    \mathbf{r} = L \frac{\mathbf{w} \times \mathbf{t}}{|\mathbf{w} \times \mathbf{t}|} + z' \mathbf{w} +  \mathbf{c}.
+\end{equation}
 
-\printbibliography{}
+
+Then let us derive $\frac{\partial{\mathbf{r} } }{\partial{\mathbf{d} }}$ using eq. (\ref{eq:new_coord})-(\ref{eq:eq4}):
+
+\begin{eqnarray}
+    \frac{\partial{\mathbf{r}}}{\partial \phi} & = &  L \frac{\partial}{\partial \phi} \frac{\mathbf{w} \times \mathbf{t}}{|\mathbf{w} \times \mathbf{t}|} \nonumber \\
+    & = & L \left[ - \frac{\mathbf{w} \times \mathbf{t}}{|\mathbf{w} \times \mathbf{t}|^2} \frac{\partial |\mathbf{w} \times \mathbf{t}|}{\partial \phi} + \frac{1}{|\mathbf{w} \times \mathbf{t}|} \mathbf{w} \times \frac{\partial \mathbf{t}}{\partial \phi} \right] \nonumber \\
+    & = & \frac{L}{|\mathbf{w} \times \mathbf{t}|}\left[ -\mathbf{u}' \left( -\frac{\mathbf{w} \cdot \mathbf{t}}{|\mathbf{w} \times \mathbf{t}|} \mathbf{w} \cdot \frac{\partial \mathbf{t}}{\partial \phi} \right)  + \mathbf{w} \times \frac{\partial \mathbf{t}}{\partial \phi}  \right] \nonumber \\
+    & = & \frac{L}{|\mathbf{w} \times \mathbf{t}|}\left[ -\mathbf{u}' \frac{1}{|\mathbf{w} \times \mathbf{t}|} \left( \mathbf{t} - (\mathbf{w} \cdot \mathbf{t})\mathbf{w} \right) \frac{\partial \mathbf{t}}{\partial \phi} + \mathbf{w} \times \frac{\partial \mathbf{t}}{\partial \phi}  \right] \nonumber \\
+    & = & \frac{L}{\mathbf{w}' \cdot \mathbf{t}}\left[ -\mathbf{u}' \left( \mathbf{w}' \cdot \frac{\partial \mathbf{t}}{\partial \phi} \right)  + \mathbf{v}' \times \frac{\partial \mathbf{t}}{\partial \phi}  \right] \nonumber \\
+    & = & \frac{L}{\mathbf{w}' \cdot \mathbf{t}}\left[ -\mathbf{u}' \left( \mathbf{u}' \times \mathbf{v}' \cdot \frac{\partial \mathbf{t}}{\partial \phi} \right)  + \mathbf{v}' \times \frac{\partial \mathbf{t}}{\partial \phi}  \right] \nonumber \\   
+    & = & \frac{L}{\mathbf{w}' \cdot \mathbf{t}}\left[ -\mathbf{u}' \left( \mathbf{u}' \cdot \mathbf{v}' \times \frac{\partial \mathbf{t}}{\partial \phi} \right)  + \mathbf{v}' \times \frac{\partial \mathbf{t}}{\partial \phi}  \right].    
+\end{eqnarray}
+$\frac{\partial \mathbf{r}}{\partial \theta}$ follows the same equation.
+
+\section{Global to local transformation}
+(Left for future authors)
 
 \end{document}
