@@ -15,8 +15,8 @@
 \end{abstract}
 
 % Covariance and Jacobian
-\newcommand{\jacobianLocalToGlobal}{\mathbb{J}_{G}}
-\newcommand{\jacobianGlobalToLocal}{\mathbb{J}_{L}}
+\newcommand{\jacobianLocalToGlobal}{\mathbb{J}_{L \rightarrow G}}
+\newcommand{\jacobianGlobalToLocal}{\mathbb{J}_{G \rightarrow L}}
 
 % Global parameter
 \newcommand{\globalPosition}{\mathbf{r}}
@@ -24,7 +24,7 @@
 \newcommand{\qoverp}{\psi}
 
 % Local
-\newcommand{\localPosition}{\mathbf{l}}
+\newcommand{\localPosition}{\boldsymbol{\epsilon}}
 \newcommand{\localAngle}{\boldsymbol{\lambda}}
 \newcommand{\surfaceCenter}{\mathbf{c}}
 \newcommand{\surfaceNormal}{\mathbf{w}}
@@ -40,6 +40,40 @@
 
 \section{Coordinate definition}
  The global coordinate consists of 3 dimension cartesian position ($\globalPosition$), 3 dimension unit cartesian direction ($\globalDirection$), and a charge divided by momentum ($\qoverp$) \footnote{A time component will be skipped in this white paper}, hence it has 7 parameters in total. Meanwhile the local coordinate is described by two local positions ($\localPosition$), two angle parameters ($\localAngle$) and $\qoverp$. The local position is made of the closest distance ($l_0$) between the track and line and longitudinal position ($l_1$) along the line axis. The sign of $l_0$ is defined as the sign of $ (\globalDirection \times \surfaceNormal) \cdot (\surfaceCenter - \globalPosition)$, where $\surfaceNormal$ is a unit vector along the line axis and $\surfaceCenter$ is the center of the line. The two angle parameters are $\phi$ and $\theta$ in the global spherical coordinate.
+
+\begin{equation}
+    \textrm{global parameters} = 
+    \begin{pmatrix}
+    \globalPosition \\
+    \globalDirection \\
+    \qoverp
+    \end{pmatrix} 
+    =
+    \begin{pmatrix}
+    x \\
+    y \\
+    z \\
+    t_x \\
+    t_y \\
+    t_z \\
+    \qoverp
+    \end{pmatrix},     
+    \quad
+    \textrm{local parameters} = 
+    \begin{pmatrix}
+    \localPosition \\
+    \localAngle \\
+    \qoverp
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+    l_0 \\
+    l_1 \\
+    \phi \\
+    \theta \\
+    \qoverp
+    \end{pmatrix}    
+\end{equation}
  
 \section{Local to global transformation}
 
