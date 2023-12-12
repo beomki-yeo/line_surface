@@ -113,7 +113,7 @@ where $\xi$ is the angle between $\vbasis$ and $\globalDirection$. Note that eq.
     & = & l_0 \left[ - \frac{\vbasis \times \globalDirection}{|\vbasis \times \globalDirection|^2} \frac{\partial |\vbasis \times \globalDirection|}{\partial \phi} + \frac{1}{|\vbasis \times \globalDirection|} \vbasis \times \frac{\partial \globalDirection}{\partial \phi} \right] \nonumber \\
     & = & \frac{l_0}{|\vbasis \times \globalDirection|}\left[ -\ubasis \left( -\frac{\vbasis \cdot \globalDirection}{|\vbasis \times \globalDirection|} \vbasis \cdot \frac{\partial \globalDirection}{\partial \phi} \right)  + \vbasis \times \frac{\partial \globalDirection}{\partial \phi}  \right] \nonumber \\
     & = & \frac{l_0}{|\vbasis \times \globalDirection|}\left[ -\ubasis \frac{1}{|\vbasis \times \globalDirection|} \left( \globalDirection - (\vbasis \cdot \globalDirection)\vbasis \right) \cdot \frac{\partial \globalDirection}{\partial \phi} + \vbasis \times \frac{\partial \globalDirection}{\partial \phi}  \right] \nonumber \\
-    & = & \frac{l_0}{|\vbasis \times \globalDirection|}\left[ -\ubasis \left( \vbasis \cdot \frac{\partial \globalDirection}{\partial \phi} \right)  + \vbasis \times \frac{\partial \globalDirection}{\partial \phi}  \right] \nonumber \\
+    & = & \frac{l_0}{|\vbasis \times \globalDirection|}\left[ -\ubasis \left( \surfaceNormal \cdot \frac{\partial \globalDirection}{\partial \phi} \right)  + \vbasis \times \frac{\partial \globalDirection}{\partial \phi}  \right] \nonumber \\
     & = & \frac{l_0}{|\vbasis \times \globalDirection|}\left[ -\ubasis \left( \ubasis \times \vbasis \cdot \frac{\partial \globalDirection}{\partial \phi} \right)  + \vbasis \times \frac{\partial \globalDirection}{\partial \phi}  \right] \nonumber \\   
     & = & \frac{l_0}{\surfaceNormal \cdot \globalDirection}\left[ -\ubasis \left( \ubasis \cdot \vbasis \times \frac{\partial \globalDirection}{\partial \phi} \right)  + \vbasis \times \frac{\partial \globalDirection}{\partial \phi}  \right].    
 \end{eqnarray}
@@ -149,7 +149,7 @@ As for the local to global transformation, the off-diagonal partial derivatives 
     \end{pmatrix},
 \end{equation}
 
-$\frac{\partial{\localAngle}}{\partial{\globalPosition}}$ should also be zero matrix because $\globalDirection$ is fixed. $\frac{\partial{\localPosition}}{\partial{\globalDirection}}$ should also be zero matrix because $\globalPosition$ is fixed. 
+$\frac{\partial{\localAngle}}{\partial{\globalPosition}}$ and $\frac{\partial{\localPosition}}{\partial{\globalDirection}}$ should also be zero matrix because $\globalDirection$ and $\globalPosition$ is fixed, respectively. 
 
 \begin{equation}\label{eq:jacobi5}
     \jacobianGlobalToLocal = 
