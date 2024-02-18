@@ -1,8 +1,33 @@
 \documentclass[12pt,a4paper]{scrarticle}
 
 \usepackage{theme/acts}
-
+\usepackage[capitalise]{cleveref}
 \usepackage{lipsum}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{nicefrac}
+
+%To allow the row spacing in matrix
+\makeatletter
+\renewcommand*\env@matrix[1][\arraystretch]{%
+  \edef\arraystretch{#1}%
+  \hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{*\c@MaxMatrixCols c}}
+\makeatother
+\newcommand{\matrixSpacingDefault}{1.4}
+
+% Command for Partial derivative
+\newcommand{\pdiff}[2]{\ensuremath{\mathchoice
+{\frac{\partial{#1}}{\partial{#2}}}%
+{\frac{\partial{#1}}{\partial{#2}}}%
+{\nicefrac{\partial{#1}}{\partial{#2}}}%
+{\nicefrac{\partial{#1}}{\partial{#2}}}}}
+\newcommand{\pdiffdiff}[2]{\ensuremath{\frac{\partial^2{#1}}{\partial{ #2}^2}}}
+
+% Command for Transpose and Inverse matrix
+\newcommand{\transpose}[1]{\ensuremath{#1^{\mathsf{T}}}}
+\newcommand{\inverse}[1]{\ensuremath{#1^{-1}}}
 
 \input{metadata.tex}
 
@@ -19,34 +44,35 @@
 \newcommand{\jacobianGlobalToLocal}{\mathbb{J}_{G \rightarrow L}}
 
 % Global parameter
-\newcommand{\globalPosition}{\mathbf{r}}
-\newcommand{\globalDirection}{\mathbf{t}}
-\newcommand{\qoverp}{\psi}
+\newcommand{\pos}{\mathbf{r}}
+\newcommand{\dir}{\mathbf{t}}
+\newcommand{\qop}{\psi}
 
 % Local
-\newcommand{\localPosition}{\boldsymbol{\epsilon}}
-\newcommand{\localAngle}{\boldsymbol{\lambda}}
+\newcommand{\local}{\boldsymbol{\epsilon}}
+\newcommand{\sphAngle}{\boldsymbol{\lambda}}
 \newcommand{\surfaceCenter}{\mathbf{c}}
 \newcommand{\surfaceNormal}{\mathbf{w}}
 \newcommand{\ubasis}{\mathbf{u}}
 \newcommand{\vbasis}{\mathbf{v}}
-\newcommand{\localPosU}{l_0}
-\newcommand{\localPosV}{l_1}
+\newcommand{\ulocal}{l_0}
+\newcommand{\vlocal}{l_1}
 
 % Etc
+\newcommand{\identityMatrix}{\mathbf{I}}
 \newcommand{\zeroMatrix}{\mathbb{O}}
 
 \tableofcontents
 
 \section{Coordinate definition}
- The global coordinate consists of 3 dimension cartesian position ($\globalPosition$), 3 dimension unit cartesian direction ($\globalDirection$), and a charge divided by momentum ($\qoverp$) \footnote{A time component will be skipped in this white paper}, hence it has 7 parameters in total. Meanwhile the local coordinate is described by two local positions ($\localPosition$), two angle parameters ($\localAngle$) and $\qoverp$. The local position is made of the closest distance ($l_0$) between the track and line and longitudinal position ($l_1$) along the line axis. The sign of $l_0$ is defined as the sign of $ (\globalDirection \times \surfaceNormal) \cdot (\surfaceCenter - \globalPosition)$, where $\surfaceNormal$ is a unit vector along the line axis and $\surfaceCenter$ is the center of the line. The two angle parameters are $\phi$ and $\theta$ in the global spherical coordinate.
+ The global coordinate consists of 3 dimension cartesian position ($\pos$), 3 dimension unit cartesian direction ($\dir$), and a charge divided by momentum ($\qop$) \footnote{A time component will be skipped in this white paper}, hence it has 7 parameters in total. Meanwhile the local coordinate is described by two local positions ($\local$), two angle parameters ($\sphAngle$) and $\qop$. The local position is made of the closest distance ($l_0$) between the track and line and longitudinal position ($l_1$) along the line axis. The sign of $l_0$ is defined as the sign of $ (\dir \times \surfaceNormal) \cdot (\surfaceCenter - \pos)$, where $\surfaceNormal$ is a unit vector along the line axis and $\surfaceCenter$ is the center of the line. The two angle parameters are $\phi$ and $\theta$ in the global spherical coordinate.
 
 \begin{equation}
     \textrm{global parameters} = 
     \begin{pmatrix}
-    \globalPosition \\
-    \globalDirection \\
-    \qoverp
+    \pos \\
+    \dir \\
+    \qop
     \end{pmatrix} 
     =
     \begin{pmatrix}
@@ -56,14 +82,14 @@
     t_x \\
     t_y \\
     t_z \\
-    \qoverp
+    \qop
     \end{pmatrix},     
     \quad
     \textrm{local parameters} = 
     \begin{pmatrix}
-    \localPosition \\
-    \localAngle \\
-    \qoverp
+    \local \\
+    \sphAngle \\
+    \qop
     \end{pmatrix}
     =
     \begin{pmatrix}
@@ -71,7 +97,7 @@
     l_1 \\
     \phi \\
     \theta \\
-    \qoverp
+    \qop
     \end{pmatrix}    
 \end{equation}
  
@@ -82,76 +108,76 @@ A jacobian for local to global transformation is represented as the derivative o
 \begin{equation}\label{eq:jacobi}
     \jacobianLocalToGlobal = 
     \begin{pmatrix}
-     \frac{\partial{\globalPosition}}{\partial{\localPosition}} & \frac{\partial{\globalPosition}}{\partial{\localAngle}} & \frac{\partial{\globalPosition}}{\partial{\qoverp}} \\
-     \frac{\partial{\globalDirection}}{\partial{\localPosition}} & \frac{\partial{\globalDirection}}{\partial{\localAngle}} & \frac{\partial{\globalDirection}}{\partial{\qoverp}} \\
-    \frac{\partial{\qoverp}}{\partial{\localPosition}} & \frac{\partial{\qoverp}}{\partial{\localAngle}} & \frac{\partial{\qoverp}}{\partial{\qoverp}}
+     \frac{\partial{\pos}}{\partial{\local}} & \frac{\partial{\pos}}{\partial{\sphAngle}} & \frac{\partial{\pos}}{\partial{\qop}} \\
+     \frac{\partial{\dir}}{\partial{\local}} & \frac{\partial{\dir}}{\partial{\sphAngle}} & \frac{\partial{\dir}}{\partial{\qop}} \\
+    \frac{\partial{\qop}}{\partial{\local}} & \frac{\partial{\qop}}{\partial{\sphAngle}} & \frac{\partial{\qop}}{\partial{\qop}}
     \end{pmatrix}.
 \end{equation}
 
-Let's take a heuristic approach first to identify the zero sub-matrices. $\frac{\partial{\globalPosition}}{\partial{\qoverp}}$ and $\frac{\partial{\globalDirection}}{\partial{\qoverp}}$ are zero because the intersection points do not change with the variation of the momentum. $\frac{\partial{\qoverp}}{\partial{\localPosition}}$ and $\frac{\partial{\qoverp}}{\partial{\localAngle}}$ are also zero for the same reason. $\frac{\partial{\globalDirection}}{\partial{\localPosition}}$ also should be zero because track direction should not change when $\lambda$ is fixed. Summing up, the jacobian can be simplified as the following:
+Let's take a heuristic approach first to identify the zero sub-matrices. $\frac{\partial{\pos}}{\partial{\qop}}$ and $\frac{\partial{\dir}}{\partial{\qop}}$ are zero because the intersection points do not change with the variation of the momentum. $\frac{\partial{\qop}}{\partial{\local}}$ and $\frac{\partial{\qop}}{\partial{\sphAngle}}$ are also zero for the same reason. $\frac{\partial{\dir}}{\partial{\local}}$ also should be zero because track direction should not change when $\lambda$ is fixed. Summing up, the jacobian can be simplified as the following:
 
 \begin{equation}\label{eq:jacobi2}
     \jacobianLocalToGlobal = 
     \begin{pmatrix}
-     \frac{\partial{\globalPosition}}{\partial{\localPosition}} & \frac{\partial{\globalPosition}}{\partial{\localAngle}} &  \zeroMatrix \\
-     \zeroMatrix & \frac{\partial{\globalDirection}}{\partial{\localAngle}} &  \zeroMatrix \\
+     \frac{\partial{\pos}}{\partial{\local}} & \frac{\partial{\pos}}{\partial{\sphAngle}} &  \zeroMatrix \\
+     \zeroMatrix & \frac{\partial{\dir}}{\partial{\sphAngle}} &  \zeroMatrix \\
      \zeroMatrix & \zeroMatrix & 1
     \end{pmatrix},
 \end{equation}
 where $\zeroMatrix$ was used as a notation for zero sub-matrices.
 
-It is straightforward to obtain $\frac{\partial{\globalDirection}}{\partial{\localAngle}}$ because $\globalDirection$ can be represented as trigonometric functions of $\phi$ and $\theta$. $\frac{\partial{\globalPosition}}{\partial{\localPosition}}$ can be calculated by defining a cartesian reference frame defined with $\ubasis$, $\vbasis$, and $\surfaceNormal$ unit vectors:
+It is straightforward to obtain $\frac{\partial{\dir}}{\partial{\sphAngle}}$ because $\dir$ can be represented as trigonometric functions of $\phi$ and $\theta$. $\frac{\partial{\pos}}{\partial{\local}}$ can be calculated by defining a cartesian reference frame defined with $\ubasis$, $\vbasis$, and $\surfaceNormal$ unit vectors:
 \begin{align}\label{eq:new_coord}
-    \ubasis & = \frac{\vbasis \times \globalDirection}{|\vbasis \times \globalDirection|}, \nonumber \\
+    \ubasis & = \frac{\vbasis \times \dir}{|\vbasis \times \dir|}, \nonumber \\
     \surfaceNormal & =  \ubasis \times \vbasis.
 \end{align}
 
 Since $l_0$ and $l_1$ is defined on $\ubasis$ and $\vbasis$, 
-we can relate $\globalPosition$ with $\localPosition$ as following: 
+we can relate $\pos$ with $\local$ as following: 
 \begin{equation}\label{eq:r_in_uv}
-    \globalPosition = l_0 \ubasis + l_1 \vbasis +  \surfaceCenter.
+    \pos = l_0 \ubasis + l_1 \vbasis +  \surfaceCenter.
 \end{equation}
 
 It is straightforward to show that
-$\frac{\partial{\globalPosition}}{\partial{\localPosition}}$ is the following $3 \times 2$ matrix: 
+$\frac{\partial{\pos}}{\partial{\local}}$ is the following $3 \times 2$ matrix: 
 \begin{equation}
-\frac{\partial{\globalPosition}}{\partial{\localPosition}}=
+\frac{\partial{\pos}}{\partial{\local}}=
     \begin{pmatrix}
      \ubasis & \vbasis 
     \end{pmatrix}    
 \end{equation}
 
-$\frac{\partial{\globalPosition}}{\partial{\localAngle}}$ can be calculated by making use of the following equations:
+$\frac{\partial{\pos}}{\partial{\sphAngle}}$ can be calculated by making use of the following equations:
 \begin{equation}\label{eq:eq1}
-    \frac{\partial \globalDirection}{\partial \phi} \cdot \globalDirection = 0,
+    \frac{\partial \dir}{\partial \phi} \cdot \dir = 0,
 \end{equation}
 
 \begin{equation}\label{eq:eq2}
-    \vbasis \times \globalDirection \times \vbasis = \globalDirection - \vbasis(\globalDirection \cdot \vbasis),
+    \vbasis \times \dir \times \vbasis = \dir - \vbasis(\dir \cdot \vbasis),
 \end{equation}
 
 \begin{equation}\label{eq:eq3}
-    \surfaceNormal \cdot \globalDirection = \frac{1- (\vbasis \cdot \globalDirection)^2}{|\vbasis \times \globalDirection|} = |\vbasis \times \globalDirection|,
+    \surfaceNormal \cdot \dir = \frac{1- (\vbasis \cdot \dir)^2}{|\vbasis \times \dir|} = |\vbasis \times \dir|,
 \end{equation}
 
 \begin{align}\label{eq:eq4}
-   \frac{\partial |\vbasis \times \globalDirection|}{\partial \phi} & = \frac{\partial \sin{\xi}}{\partial \phi} \nonumber \\
+   \frac{\partial |\vbasis \times \dir|}{\partial \phi} & = \frac{\partial \sin{\xi}}{\partial \phi} \nonumber \\
    & = \cos{\xi} \frac{\partial \xi}{\partial \phi} \nonumber \\
-   & = \vbasis \cdot \globalDirection \frac{\partial \cos^{-1}{\vbasis \cdot \globalDirection}}{\partial \phi} \nonumber \\
-   & = - \frac{\vbasis \cdot \globalDirection}{|\vbasis \times \globalDirection|} \vbasis \cdot \frac{\partial \globalDirection}{\partial \phi},
+   & = \vbasis \cdot \dir \frac{\partial \cos^{-1}{\vbasis \cdot \dir}}{\partial \phi} \nonumber \\
+   & = - \frac{\vbasis \cdot \dir}{|\vbasis \times \dir|} \vbasis \cdot \frac{\partial \dir}{\partial \phi},
 \end{align}
-where $\xi$ is the angle between $\vbasis$ and $\globalDirection$. Note that eq. (\ref{eq:eq1})-(\ref{eq:eq4}) also hold for $\theta$. Then let us derive $\frac{\partial{\globalPosition } }{\partial{\localAngle }}$ using eq. (\ref{eq:new_coord})-(\ref{eq:eq4}):
+where $\xi$ is the angle between $\vbasis$ and $\dir$. Note that eq. (\ref{eq:eq1})-(\ref{eq:eq4}) also hold for $\theta$. Then let us derive $\frac{\partial{\pos } }{\partial{\sphAngle }}$ using eq. (\ref{eq:new_coord})-(\ref{eq:eq4}):
 
 \begin{eqnarray}\label{eq:drdphi}
-    \frac{\partial{\globalPosition}}{\partial \phi} & = &  l_0 \frac{\partial}{\partial \phi} \frac{\vbasis \times \globalDirection}{|\vbasis \times \globalDirection|} \nonumber \\
-    & = & l_0 \left[ - \frac{\vbasis \times \globalDirection}{|\vbasis \times \globalDirection|^2} \frac{\partial |\vbasis \times \globalDirection|}{\partial \phi} + \frac{1}{|\vbasis \times \globalDirection|} \vbasis \times \frac{\partial \globalDirection}{\partial \phi} \right] \nonumber \\
-    & = & \frac{l_0}{|\vbasis \times \globalDirection|}\left[ -\ubasis \left( -\frac{\vbasis \cdot \globalDirection}{|\vbasis \times \globalDirection|} \vbasis \cdot \frac{\partial \globalDirection}{\partial \phi} \right)  + \vbasis \times \frac{\partial \globalDirection}{\partial \phi}  \right] \nonumber \\
-    & = & \frac{l_0}{|\vbasis \times \globalDirection|}\left[ -\ubasis \frac{1}{|\vbasis \times \globalDirection|} \left( \globalDirection - (\vbasis \cdot \globalDirection)\vbasis \right) \cdot \frac{\partial \globalDirection}{\partial \phi} + \vbasis \times \frac{\partial \globalDirection}{\partial \phi}  \right] \nonumber \\
-    & = & \frac{l_0}{|\vbasis \times \globalDirection|}\left[ -\ubasis \left( \surfaceNormal \cdot \frac{\partial \globalDirection}{\partial \phi} \right)  + \vbasis \times \frac{\partial \globalDirection}{\partial \phi}  \right] \nonumber \\
-    & = & \frac{l_0}{|\vbasis \times \globalDirection|}\left[ -\ubasis \left( \ubasis \times \vbasis \cdot \frac{\partial \globalDirection}{\partial \phi} \right)  + \vbasis \times \frac{\partial \globalDirection}{\partial \phi}  \right] \nonumber \\   
-    & = & \frac{l_0}{\surfaceNormal \cdot \globalDirection}\left[ -\ubasis \left( \ubasis \cdot \vbasis \times \frac{\partial \globalDirection}{\partial \phi} \right)  + \vbasis \times \frac{\partial \globalDirection}{\partial \phi}  \right].    
+    \frac{\partial{\pos}}{\partial \phi} & = &  l_0 \frac{\partial}{\partial \phi} \frac{\vbasis \times \dir}{|\vbasis \times \dir|} \nonumber \\
+    & = & l_0 \left[ - \frac{\vbasis \times \dir}{|\vbasis \times \dir|^2} \frac{\partial |\vbasis \times \dir|}{\partial \phi} + \frac{1}{|\vbasis \times \dir|} \vbasis \times \frac{\partial \dir}{\partial \phi} \right] \nonumber \\
+    & = & \frac{l_0}{|\vbasis \times \dir|}\left[ -\ubasis \left( -\frac{\vbasis \cdot \dir}{|\vbasis \times \dir|} \vbasis \cdot \frac{\partial \dir}{\partial \phi} \right)  + \vbasis \times \frac{\partial \dir}{\partial \phi}  \right] \nonumber \\
+    & = & \frac{l_0}{|\vbasis \times \dir|}\left[ -\ubasis \frac{1}{|\vbasis \times \dir|} \left( \dir - (\vbasis \cdot \dir)\vbasis \right) \cdot \frac{\partial \dir}{\partial \phi} + \vbasis \times \frac{\partial \dir}{\partial \phi}  \right] \nonumber \\
+    & = & \frac{l_0}{|\vbasis \times \dir|}\left[ -\ubasis \left( \surfaceNormal \cdot \frac{\partial \dir}{\partial \phi} \right)  + \vbasis \times \frac{\partial \dir}{\partial \phi}  \right] \nonumber \\
+    & = & \frac{l_0}{|\vbasis \times \dir|}\left[ -\ubasis \left( \ubasis \times \vbasis \cdot \frac{\partial \dir}{\partial \phi} \right)  + \vbasis \times \frac{\partial \dir}{\partial \phi}  \right] \nonumber \\   
+    & = & \frac{l_0}{\surfaceNormal \cdot \dir}\left[ -\ubasis \left( \ubasis \cdot \vbasis \times \frac{\partial \dir}{\partial \phi} \right)  + \vbasis \times \frac{\partial \dir}{\partial \phi}  \right].    
 \end{eqnarray}
-$\frac{\partial \globalPosition}{\partial \theta}$ follows the same equation.
+$\frac{\partial \pos}{\partial \theta}$ follows the same equation.
 
 \section{Global to local transformation}
 
@@ -160,44 +186,44 @@ A Jacobian for global to local transformation is the following:
 \begin{equation}\label{eq:jacobi3}
     \jacobianGlobalToLocal = 
     \begin{pmatrix}
-     \frac{\partial{\localPosition}}{\partial{\globalPosition}} & 
-     \frac{\partial{\localPosition}}{\partial{\globalDirection}}&  \frac{\partial{\localPosition}}{\partial{\qoverp}} \\
-     \frac{\partial{\localAngle}}{\partial{\globalPosition}} & 
-     \frac{\partial{\localAngle}}{\partial{\globalDirection}}&  \frac{\partial{\localAngle}}{\partial{\qoverp}} \\
-     \frac{\partial{\qoverp}}{\partial{\globalPosition}} & 
-     \frac{\partial{\qoverp}}{\partial{\globalDirection}}&  \frac{\partial{\qoverp}}{\partial{\qoverp}}
+     \frac{\partial{\local}}{\partial{\pos}} & 
+     \frac{\partial{\local}}{\partial{\dir}}&  \frac{\partial{\local}}{\partial{\qop}} \\
+     \frac{\partial{\sphAngle}}{\partial{\pos}} & 
+     \frac{\partial{\sphAngle}}{\partial{\dir}}&  \frac{\partial{\sphAngle}}{\partial{\qop}} \\
+     \frac{\partial{\qop}}{\partial{\pos}} & 
+     \frac{\partial{\qop}}{\partial{\dir}}&  \frac{\partial{\qop}}{\partial{\qop}}
     \end{pmatrix},
 \end{equation}
 
-As for the local to global transformation, the off-diagonal partial derivatives related to $\qoverp$ are zero matrices:
+As for the local to global transformation, the off-diagonal partial derivatives related to $\qop$ are zero matrices:
 
 \begin{equation}\label{eq:jacobi4}
     \jacobianGlobalToLocal = 
     \begin{pmatrix}
-     \frac{\partial{\localPosition}}{\partial{\globalPosition}} & 
-     \frac{\partial{\localPosition}}{\partial{\globalDirection}}&  \zeroMatrix \\
-     \frac{\partial{\localAngle}}{\partial{\globalPosition}} & 
-     \frac{\partial{\localAngle}}{\partial{\globalDirection}}&  \zeroMatrix \\
+     \frac{\partial{\local}}{\partial{\pos}} & 
+     \frac{\partial{\local}}{\partial{\dir}}&  \zeroMatrix \\
+     \frac{\partial{\sphAngle}}{\partial{\pos}} & 
+     \frac{\partial{\sphAngle}}{\partial{\dir}}&  \zeroMatrix \\
      \zeroMatrix & 
      \zeroMatrix &  1
     \end{pmatrix},
 \end{equation}
 
-$\frac{\partial{\localAngle}}{\partial{\globalPosition}}$ and $\frac{\partial{\localPosition}}{\partial{\globalDirection}}$ should also be zero matrix because $\globalDirection$ and $\globalPosition$ is fixed, respectively. 
+$\frac{\partial{\sphAngle}}{\partial{\pos}}$ and $\frac{\partial{\local}}{\partial{\dir}}$ should also be zero matrix because $\dir$ and $\pos$ is fixed, respectively. 
 
 \begin{equation}\label{eq:jacobi5}
     \jacobianGlobalToLocal = 
     \begin{pmatrix}
-     \frac{\partial{\localPosition}}{\partial{\globalPosition}} & \zeroMatrix &  \zeroMatrix \\
-     \zeroMatrix & \frac{\partial{\localAngle}}{\partial{\globalDirection}} &  \zeroMatrix \\
+     \frac{\partial{\local}}{\partial{\pos}} & \zeroMatrix &  \zeroMatrix \\
+     \zeroMatrix & \frac{\partial{\sphAngle}}{\partial{\dir}} &  \zeroMatrix \\
      \zeroMatrix & \zeroMatrix & 1
     \end{pmatrix},
 \end{equation}
 
-$\frac{\partial{\localAngle}}{\partial{\globalDirection}}$ is just a inverse of $\frac{\partial{\globalDirection}}{\partial{\localAngle}}$, and $\frac{\partial{\localPosition}}{\partial{\globalPosition}}$ is the transpose of $\frac{\partial{\globalPosition}}{\partial{\localPosition}}$.
+$\frac{\partial{\sphAngle}}{\partial{\dir}}$ is just a inverse of $\frac{\partial{\dir}}{\partial{\sphAngle}}$, and $\frac{\partial{\local}}{\partial{\pos}}$ is the transpose of $\frac{\partial{\pos}}{\partial{\local}}$.
 
 \begin{equation}\label{eq:dldr}
-\frac{\partial{\localPosition}}{\partial{\globalPosition}}=
+\frac{\partial{\local}}{\partial{\pos}}=
     \begin{pmatrix}
      \ubasis^{\mathrm{T}} \\
      \vbasis^{\mathrm{T}}
@@ -206,10 +232,46 @@ $\frac{\partial{\localAngle}}{\partial{\globalDirection}}$ is just a inverse of 
 
 If it is not clear, it is helpful to take an inner product between Eq. (\ref{eq:r_in_uv}) and $\ubasis$ or $\vbasis$, and to perform the differentiation.
 
+To mathematically prove that $\pdiff{\local}{\dir}$ is the zero matrix,  we can start by deriving \cref{eq:r_in_uv} with respect to $\dir$ where it is obvious that $\pdiff{\vlocal}{\dir}$ is the zero matrix:
+\begin{equation}\label{eq:dmudt}
+    \pdiff{\local}{\dir} = 
+    \begin{pmatrix}[\matrixSpacingDefault]
+    \pdiff{}{\dir}\left((\pos - \surfaceCenter) \cdot \ubasis \right) \\
+    \pdiff{}{\dir}\left((\pos - \surfaceCenter) \cdot \vbasis \right)
+    \end{pmatrix} =
+    \begin{pmatrix}[\matrixSpacingDefault]
+    \transpose{(\pos - \surfaceCenter)} \pdiff{}{\dir} \left( \frac{\vbasis \times \dir}{|\vbasis \times \dir|} \right) \\
+    \zeroMatrix
+    \end{pmatrix}.    
+\end{equation}
+
+$\pdiff{}{\dir} \left( \frac{\vbasis \times \dir}{|\vbasis \times \dir|} \right)$ can be expanded by the chain rule and the column-wise cross product, $\otimes$:
+\begin{align}\label{eq:dudt}
+    \pdiff{}{\dir} \left( \frac{\vbasis \times \dir}{|\vbasis \times \dir|} \right) & = - \frac{1}{|\vbasis \times \dir|} \identityMatrix_3 \otimes \vbasis - \frac{\vbasis \times \dir}{|\vbasis \times \dir|^2}\pdiff{|\vbasis\times\dir|}{\dir} \nonumber \\
+    & = - \frac{1}{|\vbasis \times \dir|} \left( \identityMatrix_3 \otimes \vbasis + \ubasis \pdiff{|\vbasis\times\dir|}{\dir} \right).
+\end{align}
+$\pdiff{|\vbasis \times \dir|}{\dir}$ can be detailed as follows:
+\begin{align}\label{eq:dvtdt}
+\pdiff{|\vbasis\times\dir|}{\dir} & = \pdiff{\sqrt{(\vbasis \times \dir)\cdot(\vbasis \times \dir)}}{\dir} \nonumber \\
+& = \frac{1}{2|\vbasis \times \dir|} \pdiff{[(\vbasis \times \dir)\cdot(\vbasis \times \dir)]}{\dir} \nonumber \\
+& = \frac{1}{|\vbasis \times \dir|}  \transpose{(\vbasis \times \dir)} \pdiff{(\vbasis \times \dir)}{\dir} \nonumber \\
+& = -\transpose{\ubasis} (\identityMatrix_3 \otimes \vbasis).
+\end{align}
+
+Using \cref{eq:dudt,eq:dvtdt}, we can show that $\pdiff{\ulocal}{\dir}$ of \cref{eq:dmudt} is also the zero matrix:
+\begin{align}
+\transpose{(\pos - \surfaceCenter)}\pdiff{}{\dir} \left( \frac{\vbasis \times \dir}{|\vbasis \times \dir|} \right) & =
+-\frac{\transpose{(\pos - \surfaceCenter)} }{|\vbasis \times \dir|}(\identityMatrix_3 - \ubasis \transpose{\ubasis})(\identityMatrix_3 \otimes \vbasis) \nonumber \\
+& = - \frac{\transpose{(\ulocal \ubasis + \vlocal \vbasis)} (\identityMatrix_3 - \ubasis \transpose{\ubasis}) }{|\vbasis \times \dir|} (\identityMatrix_3 \otimes \vbasis)  \nonumber \\
+& = -\frac{\vlocal \transpose{\vbasis}}{|\vbasis \times \dir|}(\identityMatrix_3 \otimes \vbasis) \nonumber \\
+& = \zeroMatrix.
+\end{align}
+
+
 \section{Discussions}
 
-$\frac{\partial{\globalPosition}}{\partial{\localAngle}}$ is the only nonzero submatrix, which makes it worth discussing how the partial derivative works here. When $l_0$ and $l_1$ is fixed, there is only one way that $\globalPosition$ can vary, which is a rotation around $\vbasis$. In other words, $d\globalPosition$ is parallel to $\surfaceNormal$. In the case of $\frac{\partial{\localPosition}}{\partial{\globalDirection}}$, $\globalDirection$ just rotates around $\ubasis$, which does not introduce any change in $\localPosition$.
+$\frac{\partial{\pos}}{\partial{\sphAngle}}$ is the only nonzero submatrix, which makes it worth discussing how the partial derivative works here. When $l_0$ and $l_1$ is fixed, there is only one way that $\pos$ can vary, which is a rotation around $\vbasis$. In other words, $d\pos$ is parallel to $\surfaceNormal$. In the case of $\frac{\partial{\local}}{\partial{\dir}}$, $\dir$ just rotates around $\ubasis$, which does not introduce any change in $\local$.
 
-It is easy to show that $\jacobianGlobalToLocal\jacobianLocalToGlobal$ is an identity matrix. What we need to prove is that $\frac{\partial{\localPosition}}{\partial{\globalPosition}} \frac{\partial{\globalPosition}}{\partial{\localAngle}}$ is zero matrix.  Our discussion above already implies that $\frac{\partial{\globalPosition}}{\partial{\localAngle}}$ is orthogonal to $\ubasis$ and $\vbasis$, and the orthogonality can be confirmed from Eq. (\ref{eq:drdphi}). Therefore, $\frac{\partial{\localPosition}}{\partial{\globalPosition}} \frac{\partial{\globalPosition}}{\partial{\localAngle}}$ is a zero matrix because $\frac{\partial{\localPosition}}{\partial{\globalPosition}}$ consists of $\ubasis$ and $\vbasis$ according to Eq. (\ref{eq:dldr}).
+It is easy to show that $\jacobianGlobalToLocal\jacobianLocalToGlobal$ is an identity matrix. What we need to prove is that $\frac{\partial{\local}}{\partial{\pos}} \frac{\partial{\pos}}{\partial{\sphAngle}}$ is zero matrix.  Our discussion above already implies that $\frac{\partial{\pos}}{\partial{\sphAngle}}$ is orthogonal to $\ubasis$ and $\vbasis$, and the orthogonality can be confirmed from Eq. (\ref{eq:drdphi}). Therefore, $\frac{\partial{\local}}{\partial{\pos}} \frac{\partial{\pos}}{\partial{\sphAngle}}$ is a zero matrix because $\frac{\partial{\local}}{\partial{\pos}}$ consists of $\ubasis$ and $\vbasis$ according to Eq. (\ref{eq:dldr}).
 
 \end{document}
